@@ -15,7 +15,7 @@ $ go get github.com/wspl/creeper
 
 #### Hello World!
 
-Create `hacker_news.crr`
+Create `hacker_news.crs`
 
 ```
 page(@page=1) = "https://news.ycombinator.com/news?p={@page}"
@@ -34,7 +34,7 @@ package main
 import "github.com/wspl/creeper"
 
 func main() {
-	c := creeper.Open("./hacker_news.crr")
+	c := creeper.Open("./hacker_news.crs")
 	c.Array("news").Each(func(c *creeper.Creeper) {
 		println("title: ", c.String("title"))
 		println("site: ", c.String("site"))

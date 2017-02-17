@@ -13,7 +13,7 @@ func main() {
 	//	println("cover: ", c.String("cover"))
 	//	println("=================================")
 	//})
-	c := creeper.Open("./example.crr")
+	c := creeper.Open("./example.crs")
 	c.Array("news").Each(func(c *creeper.Creeper) {
 		println("title: ", c.String("title"))
 		println("site: ", c.String("site"))
