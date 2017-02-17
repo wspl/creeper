@@ -1,27 +1,5 @@
-# Varibale
-name = "test"
+page(@page=1) = "https://news.ycombinator.com/news?p={@page}"
 
-# Url parser
-index(@page=0)="http://g.e-hentai.org/?page={@page}"
-gallery(@page=0,code)="http://g.e-hentai.org/g/{code}/?p={@page}&hc=1"
-
-# Crawler Struct
-gallery[]: index -> $("table.itg tr.gtr0,tr.gtr1")
-	title: $("td.itd div div.it5 a").text
-	cover: $("td.itd div div.it2")
-		.html
-		.expand("(//|inits?~)(.*?org)[~/]([^~]*\\.jpg)[~\"]", "http://$2/$3")
-	uploader: $("td.itu div a").html
-	category: $("td.itdc a img").attr("alt")
-	datetime: $("td.itd[style]").html
-	rating: $("td.itd div div.it4 div")
-		.style
-		.expand(`background-position:-?(\d+)px -?(\d+)px`, "5-$1/16-($2-1)/40")
-		.calc
-	_code: $("td.itd div div.it5 a").href.match("/g/(.*)")
-	tags[]: gallery(code = _code) -> $("div#taglist table tr td:eq(1) div a")
-		name: .html
-	pictures[]: gallery(code = _code) -> $("div.gdtl,div.gdtm")
-		thumbnail: .html.match(`(https?://[^"]*?\.jpg)`)
-		_srcHref: $("a").href
-		src: _srcHref -> $("div.sni a img[style]").src
+news[]: page -> $("tr.athing")
+	title: $(".title a.storylink").text
+	site: $(".title span.sitestr").text
