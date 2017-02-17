@@ -22,6 +22,7 @@ page(@page=1) = "https://news.ycombinator.com/news?p={@page}"
 news[]: page -> $("tr.athing")
 	title: $(".title a.storylink").text
 	site: $(".title span.sitestr").text
+	link: $(".title a.storylink").href
 ```
 
 Then, create `main.go`
@@ -39,9 +40,10 @@ func main() {
 	raw := string(buf)
 	c := creeper.Creeper_New(raw)
 	c.Array("news").Each(func(c *creeper.Creeper) {
-		println("===")
 		println("title: ", c.String("title"))
 		println("site: ", c.String("site"))
+		println("link: ", c.String("link"))
+		println("===")
 	})
 }
 ```
@@ -51,13 +53,13 @@ Build and run. Console will print something like:
 ```
 title:  Samsung chief Lee arrested as S.Korean corruption probe deepens
 site:  reuters.com
+link:  http://www.reuters.com/article/us-southkorea-politics-samsung-group-idUSKBN15V2RD
 ===
 title:  ReactOS 0.4.4 Released
 site:  reactos.org
+link:  https://reactos.org/project-news/reactos-044-released
 ===
-title:  YC Annual Letter 2017
-site:  samaltman.com
-===
-title:  Let’s not demonize driving, just stop subsidizing it
-site:  cityobservatory.org
+title:  FeFETs: How this new memory stacks up against existing non-volatile memory
+site:  semiengineering.com
+link:  http://semiengineering.com/what-are-fefets/
 ```

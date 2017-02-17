@@ -20,6 +20,7 @@ func main() {
 	c.Array("news").Each(func(c *Creeper) {
 		println("title: ", c.String("title"))
 		println("site: ", c.String("site"))
-		println("=================================")
+		println("link: ", c.String("link"))
+		println("===")
 	})
 }
