@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	//buf, _ := ioutil.ReadFile("./eh.crr")
+	//buf, _ := ioutil.ReadFile("./eh.crs")
 	//raw := string(buf)
 	//c := New(raw)
 	//c.Array("gallery").Each(func(c *Creeper) {
