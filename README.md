@@ -24,7 +24,7 @@ news[]: page -> $("tr.athing")
 	site: $(".title span.sitestr").text
 ```
 
-Then, Create `main.go`
+Then, create `main.go`
 
 ```go
 package main
