@@ -137,14 +137,3 @@ There are all supported funs:
 Plutonist
 
 > [impl.moe](impl.moe) · Github [@wspl](impl.moe) 
-
-
-
-## License
-
-```
-Copyright (c) 2017 Plutonist
-All rights reserved.
-
-Under Apache License 2.0
-```
