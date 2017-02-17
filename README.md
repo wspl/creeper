@@ -14,7 +14,7 @@ $ go get github.com/wspl/creeper
 
 #### Hello World!
 
-Create `example.crr`
+Create `hacker_news.crr`
 
 ```
 page(@page=1) = "https://news.ycombinator.com/news?p={@page}"
@@ -30,15 +30,10 @@ Then, create `main.go`
 ```go
 package main
 
-import (
-	"io/ioutil"
-	"github.com/wspl/creeper"
-)
+import "github.com/wspl/creeper"
 
 func main() {
-	buf, _ := ioutil.ReadFile("./example.crr")
-	raw := string(buf)
-	c := creeper.Creeper_New(raw)
+	c := creeper.Open("./hacker_news.crr")
 	c.Array("news").Each(func(c *creeper.Creeper) {
 		println("title: ", c.String("title"))
 		println("site: ", c.String("site"))

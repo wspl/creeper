@@ -1,12 +1,19 @@
 package creeper
 
-func Creeper_New(raw string) *Creeper {
-	f := Formatting(raw)
-	c := Creeper_NewByFormatted(f)
-	return c
+import "io/ioutil"
+
+func Open(path string) *Creeper {
+	buf, _ := ioutil.ReadFile(path)
+	raw := string(buf)
+	return New(raw)
 }
 
-func Creeper_NewByFormatted(f *Formatted) *Creeper {
+func New(raw string) *Creeper {
+	f := Formatting(raw)
+	return NewByFormatted(f)
+}
+
+func NewByFormatted(f *Formatted) *Creeper {
 	c := new(Creeper)
 
 	c.Nodes = f.Nodes
