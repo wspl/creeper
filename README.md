@@ -87,7 +87,7 @@ Incidentally, `@page` is a parameter that will automatically increasing when cur
 
 ### Node
 
-Nodes are tree structure that represents the data structure you are going to crawl.
+Nodes are tree structure that represent the data structure you are going to crawl.
 
 ```
 news[]: page -> $("tr.athing")
