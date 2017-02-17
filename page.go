@@ -52,7 +52,9 @@ func (p *Page) Body() string {
 	res, _ := http.Get(u)
 	defer res.Body.Close()
 	body, _ := ioutil.ReadAll(res.Body)
-	return string(body)
+	sb := string(body)
+	p.Node.Creeper.Cache_Set(p.Url(), sb)
+	return sb
 }
 
 func (p *Page) IsDynamic() bool {
