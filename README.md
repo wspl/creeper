@@ -136,4 +136,4 @@ There are all supported funs:
 
 Plutonist
 
-> [impl.moe](https://impl.moe) · Github [@wspl](impl.moe) 
+> [impl.moe](https://impl.moe) · Github [@wspl](https://github.com/wspl) 
