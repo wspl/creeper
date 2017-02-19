@@ -7,6 +7,25 @@ Creeper is a *next-generation* crawler which fetches web page by creeper script.
 
 **Warning:** At present this project is still under stage-1 development, please do not use in the production environment.
 
+## Roadmap
+
+#### Stage-I
+
+* ~~Basic crawling function~~ ← Complete!
+* Perfect the code to make it robust
+* Add unit test
+
+#### Stage-II
+
+- Decoupling http client and goquery, and add custom interfaces.
+- Cross-platform support. Provide Android and iOS SDK.
+
+#### Stage-III
+
+- Add restful api for remote calling
+- Add debug api
+- Create an IDE based on web for creeper script
+
 ## Get Started
 
 #### Installation
@@ -78,7 +97,7 @@ When you need town, use it as if you were calling a function:
 news[]: page(ext="Hello World!") -> $("tr.athing")
 ```
 
-Hey, you might have noticed that the `@page` parameter is not used. Yeah, it is a special parameter.
+You might have noticed that the `@page` parameter is not used. Yeah, it is a special parameter.
 
 Expression in town definition line like `name="something"`, represents parameter `name` has a default value `"something"`.
 
