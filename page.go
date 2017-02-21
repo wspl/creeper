@@ -7,11 +7,11 @@ import (
 )
 
 type Page struct {
-	Raw string
+	Raw  string
 	Node *Node
 
 	Town *Town
-	Ref string
+	Ref  string
 
 	Index int
 }
@@ -36,7 +36,9 @@ func (p *Page) Url() (string, error) {
 			if len(v) > 0 && v[0] == '_' {
 				n := p.Node.SearchRef(v)
 				v, err := n.Value()
-				if err != nil { return "", err }
+				if err != nil {
+					return "", err
+				}
 				p.Town.Set(k, v)
 			}
 		}
@@ -48,15 +50,21 @@ func (p *Page) Url() (string, error) {
 
 func (p *Page) Body() (string, error) {
 	u, err := p.Url()
-	if err != nil { return "", err }
+	if err != nil {
+		return "", err
+	}
 	if v, e := p.Node.Creeper.Cache_Get(u); e {
 		return v, nil
 	}
 	res, err := http.Get(u)
-	if err != nil { return "", err }
+	if err != nil {
+		return "", err
+	}
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
-	if err != nil { return "", err }
+	if err != nil {
+		return "", err
+	}
 	sb := string(body)
 	p.Node.Creeper.Cache_Set(u, sb)
 	return sb, nil

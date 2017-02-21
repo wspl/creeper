@@ -36,7 +36,7 @@ func Formatting(s string) *Formatted {
 	nodes := ParseNode(nodeLn)
 
 	return &Formatted{
-		Raw: s,
+		Raw:   s,
 		Towns: towns,
 		Nodes: nodes,
 	}
@@ -47,9 +47,11 @@ func linesCombine(l []string) []string {
 	for i, s := range l {
 		if strings.TrimSpace(s)[0] != '.' {
 			s := s
-			for i := i+1; i < len(l); i++ {
+			for i := i + 1; i < len(l); i++ {
 				ns := strings.TrimSpace(l[i])
-				if ns[0] != '.' { break }
+				if ns[0] != '.' {
+					break
+				}
 				s = s + ns
 			}
 			nl = append(nl, s)

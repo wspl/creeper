@@ -18,19 +18,19 @@ func Town_New() *Town {
 }
 
 type Town struct {
-	Raw string
+	Raw     string
 	Creeper *Creeper
-	Node *Node
+	Node    *Node
 
-	Name string
-	Params map[string]string
+	Name     string
+	Params   map[string]string
 	Template string
 }
 
 func (t *Town) Value() string {
 	s := t.Template
 	for k, v := range t.Params {
-		s = strings.Replace(s, "{" + k + "}", v, -1)
+		s = strings.Replace(s, "{"+k+"}", v, -1)
 	}
 	return s
 }
@@ -62,7 +62,9 @@ func (t *Town) Attach() bool {
 			rt = tt
 		}
 	}
-	if rt == nil { return false }
+	if rt == nil {
+		return false
+	}
 	t.Template = rt.Template
 	tp := t.Params
 	t.Params = rt.Params
@@ -108,7 +110,7 @@ func ParseTownLine(l string) *Town {
 func trimTownValue(s string) string {
 	s = strings.TrimSpace(s)
 	if s[0] == '"' || s[0] == '`' {
-		s = s[1:len(s)-1]
+		s = s[1 : len(s)-1]
 		if s[0] == '"' {
 			s = strings.Replace(s, `\\`, `\`, -1)
 		}
@@ -131,10 +133,10 @@ func parseParams(s string) (map[string]string, int) {
 
 	var sb bytes.Buffer
 
-	in_key := false
-	in_str := false // "example"
-	in_exp := false // `example`
-	in_std := false //  example
+	inKey := false
+	inStr := false // "example"
+	inExp := false // `example`
+	inStd := false //  example
 
 	for i, c := range s {
 		cso := func(o int) int32 {
@@ -145,7 +147,9 @@ func parseParams(s string) (map[string]string, int) {
 			return 0
 		}
 		co := func(o int) int32 {
-			if i + o < 0 || i + 0 >= len(s) { return 0 }
+			if i+o < 0 || i+0 >= len(s) {
+				return 0
+			}
 			if o < 0 {
 				j := i
 				for j >= 0 && o != 0 {
@@ -158,7 +162,7 @@ func parseParams(s string) (map[string]string, int) {
 				return rune(s[j])
 			} else if o > 0 {
 				j := i
-				for j < len(s) - 1 && o != 0 {
+				for j < len(s)-1 && o != 0 {
 					j++
 					if !unicode.IsSpace(rune(s[j])) {
 						o--
@@ -171,33 +175,37 @@ func parseParams(s string) (map[string]string, int) {
 			return 0
 		}
 
-		if i == 0 && c != '(' { return nil, -1 }
+		if i == 0 && c != '(' {
+			return nil, -1
+		}
 
-		if !in_exp && !in_str && !in_std {
+		if !inExp && !inStr && !inStd {
 			if (co(-1) == '(' || co(-1) == ',') && (unicode.IsLetter(c) || c == '@') {
-				in_key = true
+				inKey = true
 			} else if (co(-1) == '=' || co(-1) == ',' || co(-1) == '(') &&
-					!unicode.IsSpace(c) && c != '"' && c!= '`' {
-				in_std = true
+				!unicode.IsSpace(c) && c != '"' && c != '`' {
+				inStd = true
 			} else if co(-2) == '=' || co(-2) == ',' || co(-2) == '(' {
 				switch co(-1) {
-				case '"': in_str = true
-				case '`': in_exp = true
+				case '"':
+					inStr = true
+				case '`':
+					inExp = true
 				}
 			}
 		}
 
-		if in_key || in_exp || in_std || in_str {
+		if inKey || inExp || inStd || inStr {
 			sb.WriteRune(c)
 		}
 
-		if !in_exp && !in_std && !in_str && !in_key && c == ')' {
+		if !inExp && !inStd && !inStr && !inKey && c == ')' {
 			endPos = i
 		}
 
 		if c != '\\' {
-			if in_key && (co(1) == ',' || co(1) == ')' || co(1) == '=') {
-				in_key = false
+			if inKey && (co(1) == ',' || co(1) == ')' || co(1) == '=') {
+				inKey = false
 				//println("key: ", sb.String())
 				pK = strings.TrimSpace(sb.String())
 				kvMap[pK] = ""
@@ -205,8 +213,8 @@ func parseParams(s string) (map[string]string, int) {
 					pIsK = true
 				}
 				sb.Reset()
-			} else if in_str && cso(1) == '"' {
-				in_str = false
+			} else if inStr && cso(1) == '"' {
+				inStr = false
 				//println("str: ", sb.String())
 				s := strings.TrimSpace(sb.String())
 				s = strings.Replace(s, `\\`, `\`, -1)
@@ -217,8 +225,8 @@ func parseParams(s string) (map[string]string, int) {
 				}
 				pIsK = false
 				sb.Reset()
-			} else if in_exp && cso(1) == '`' {
-				in_exp = false
+			} else if inExp && cso(1) == '`' {
+				inExp = false
 				//println("exp: ", sb.String())
 				s := strings.TrimSpace(sb.String())
 				if pIsK {
@@ -228,8 +236,8 @@ func parseParams(s string) (map[string]string, int) {
 				}
 				pIsK = false
 				sb.Reset()
-			} else if in_std && (co(1) == ',' || co(1) == ')') {
-				in_std = false
+			} else if inStd && (co(1) == ',' || co(1) == ')') {
+				inStd = false
 				//println("std: ", sb.String())
 				s := strings.TrimSpace(sb.String())
 				if pIsK {
@@ -242,7 +250,9 @@ func parseParams(s string) (map[string]string, int) {
 			}
 		}
 
-		if endPos > -1 { break }
+		if endPos > -1 {
+			break
+		}
 	}
 	return kvMap, endPos
 }

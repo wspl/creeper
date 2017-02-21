@@ -9,19 +9,19 @@ import (
 	"github.com/moxar/arithmetic"
 )
 
-var(
+var (
 	rx_funName = regexp.MustCompile(`^[a-z$][a-zA-Z]{0,15}`)
 )
 
 type Fun struct {
-	Raw string
+	Raw  string
 	Node *Node
 
-	Name string
+	Name   string
 	Params []string
 
 	Selection *goquery.Selection
-	Result string
+	Result    string
 
 	PrevFun *Fun
 	NextFun *Fun
@@ -39,7 +39,7 @@ func PowerfulFind(s *goquery.Selection, q string) *goquery.Selection {
 		rs := rx_selectPseudoEq.FindAllStringIndex(q, -1)
 		sel := s
 		for _, r := range rs {
-			iStr := q[r[0]+4:r[1]-1]
+			iStr := q[r[0]+4 : r[1]-1]
 			i64, _ := strconv.ParseInt(iStr, 10, 32)
 			i := int(i64)
 			sq := q[:r[0]]
@@ -58,10 +58,14 @@ func PowerfulFind(s *goquery.Selection, q string) *goquery.Selection {
 func (f *Fun) InitSelector() error {
 	if f.Node.IsArray || f.Node.IndentLen == 0 || f.Node.Page != nil {
 		body, err := f.Node.Page.Body()
-		if err != nil { return err }
+		if err != nil {
+			return err
+		}
 		r := strings.NewReader(body)
 		doc, err := goquery.NewDocumentFromReader(r)
-		if err != nil { return err }
+		if err != nil {
+			return err
+		}
 		bud := PowerfulFind(doc.Selection, f.Params[0])
 		if len(bud.Nodes) > f.Node.Index {
 			f.Selection = PowerfulFind(doc.Selection, f.Params[0]).Eq(f.Node.Index)
@@ -72,7 +76,9 @@ func (f *Fun) InitSelector() error {
 		}
 	} else {
 		_, err := f.Node.ParentNode.Fun.Invoke()
-		if err != nil { return err }
+		if err != nil {
+			return err
+		}
 		f.Selection = PowerfulFind(f.Node.ParentNode.Fun.Selection, f.Params[0]).Eq(f.Node.Index)
 	}
 	return nil
@@ -82,14 +88,23 @@ func (f *Fun) Invoke() (string, error) {
 	switch f.Name {
 	case "$":
 		err := f.InitSelector()
-		if err != nil { return "", err }
-	case "attr": f.Result, _ = f.PrevFun.Selection.Attr(f.Params[0])
-	case "text": f.Result = f.PrevFun.Selection.Text()
-	case "html": f.Result, _ = f.PrevFun.Selection.Html()
-	case "outerHTML": f.Result, _ = goquery.OuterHtml(f.PrevFun.Selection)
-	case "style": f.Result, _ = f.PrevFun.Selection.Attr("style")
-	case "href": f.Result, _ = f.PrevFun.Selection.Attr("href")
-	case "src": f.Result, _ = f.PrevFun.Selection.Attr("src")
+		if err != nil {
+			return "", err
+		}
+	case "attr":
+		f.Result, _ = f.PrevFun.Selection.Attr(f.Params[0])
+	case "text":
+		f.Result = f.PrevFun.Selection.Text()
+	case "html":
+		f.Result, _ = f.PrevFun.Selection.Html()
+	case "outerHTML":
+		f.Result, _ = goquery.OuterHtml(f.PrevFun.Selection)
+	case "style":
+		f.Result, _ = f.PrevFun.Selection.Attr("style")
+	case "href":
+		f.Result, _ = f.PrevFun.Selection.Attr("href")
+	case "src":
+		f.Result, _ = f.PrevFun.Selection.Attr("src")
 	case "calc":
 		v, _ := arithmetic.Parse(f.PrevFun.Result)
 		n, _ := arithmetic.ToFloat(v)
@@ -119,7 +134,6 @@ func (f *Fun) Invoke() (string, error) {
 		return f.Result, nil
 	}
 }
-
 
 func ParseFun(n *Node, s string) *Fun {
 	fun := new(Fun)

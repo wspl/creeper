@@ -12,7 +12,7 @@ var (
 )
 
 type Node struct {
-	Raw string
+	Raw     string
 	Creeper *Creeper
 
 	Name      string
@@ -24,11 +24,11 @@ type Node struct {
 
 	Index int
 
-	PrevNode   *Node
-	NextNode   *Node
-	ParentNode *Node
+	PrevNode       *Node
+	NextNode       *Node
+	ParentNode     *Node
 	FirstChildNode *Node
-	LastChildNode *Node
+	LastChildNode  *Node
 }
 
 func (n *Node) Inc() {
@@ -102,7 +102,7 @@ func ParseNode(ln []string) []*Node {
 				node.PrevNode = justNode.ParentNode
 				node.ParentNode = justNode.ParentNode.ParentNode
 			}
-			if i == len(ln) - 1 {
+			if i == len(ln)-1 {
 				n := node
 				for n.ParentNode != nil {
 					n.ParentNode.LastChildNode = n
@@ -116,7 +116,7 @@ func ParseNode(ln []string) []*Node {
 		}
 		if len(sn[3]) > 0 {
 			if sn[3][0] == '.' {
-				node.Fun = ParseFun(node, node.ParentNode.Fun.Raw + sn[3])
+				node.Fun = ParseFun(node, node.ParentNode.Fun.Raw+sn[3])
 				node.Page = node.ParentNode.Page
 			} else {
 				node.Fun = ParseFun(node, sn[3])
