@@ -55,10 +55,13 @@ func PowerfulFind(s *goquery.Selection, q string) *goquery.Selection {
 	}
 }
 
-func (f *Fun) InitSelector() {
+func (f *Fun) InitSelector() error {
 	if f.Node.IsArray || f.Node.IndentLen == 0 || f.Node.Page != nil {
-		r := strings.NewReader(f.Node.Page.Body())
-		doc, _ := goquery.NewDocumentFromReader(r)
+		body, err := f.Node.Page.Body()
+		if err != nil { return err }
+		r := strings.NewReader(body)
+		doc, err := goquery.NewDocumentFromReader(r)
+		if err != nil { return err }
 		bud := PowerfulFind(doc.Selection, f.Params[0])
 		if len(bud.Nodes) > f.Node.Index {
 			f.Selection = PowerfulFind(doc.Selection, f.Params[0]).Eq(f.Node.Index)
@@ -66,17 +69,20 @@ func (f *Fun) InitSelector() {
 			f.Node.Page.Inc()
 			f.Node.Reset()
 			f.InitSelector()
-			return
 		}
 	} else {
-		f.Node.ParentNode.Fun.Invoke()
+		_, err := f.Node.ParentNode.Fun.Invoke()
+		if err != nil { return err }
 		f.Selection = PowerfulFind(f.Node.ParentNode.Fun.Selection, f.Params[0]).Eq(f.Node.Index)
 	}
+	return nil
 }
 
-func (f *Fun) Invoke() string {
+func (f *Fun) Invoke() (string, error) {
 	switch f.Name {
-	case "$": f.InitSelector()
+	case "$":
+		err := f.InitSelector()
+		if err != nil { return "", err }
 	case "attr": f.Result, _ = f.PrevFun.Selection.Attr(f.Params[0])
 	case "text": f.Result = f.PrevFun.Selection.Text()
 	case "html": f.Result, _ = f.PrevFun.Selection.Html()
@@ -110,7 +116,7 @@ func (f *Fun) Invoke() string {
 	if f.NextFun != nil {
 		return f.NextFun.Invoke()
 	} else {
-		return f.Result
+		return f.Result, nil
 	}
 }
 

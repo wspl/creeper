@@ -5,19 +5,10 @@ import (
 )
 
 func main() {
-	//buf, _ := ioutil.ReadFile("./eh.crs")
-	//raw := string(buf)
-	//c := New(raw)
-	//c.Array("gallery").Each(func(c *Creeper) {
-	//	println("title: ", c.String("title"))
-	//	println("cover: ", c.String("cover"))
-	//	println("=================================")
-	//})
-	c := creeper.Open("./example.crs")
-	c.Array("news").Each(func(c *creeper.Creeper) {
-		println("title: ", c.String("title"))
-		println("site: ", c.String("site"))
-		println("link: ", c.String("link"))
-		println("===")
+	c := creeper.Open("./eh.crs")
+	c.Array("gallery").Each(func(c *creeper.Creeper) {
+		println("title: ", c.MString("title"))
+		println("cover: ", c.MString("cover"))
+		println("=================================")
 	})
 }

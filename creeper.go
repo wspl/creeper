@@ -56,7 +56,12 @@ func (c *Creeper) Array(key string) *Creeper {
 	return c
 }
 
-func (c *Creeper) String(key string) string {
+func (c *Creeper) MString(key string) string {
+	v, _ := c.String(key)
+	return v
+}
+
+func (c *Creeper) String(key string) (string, error) {
 	return c.Node.FirstChildNode.SearchFlatScope(key).Value()
 }
 

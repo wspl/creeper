@@ -69,7 +69,7 @@ func (n *Node) SearchFlatScope(name string) *Node {
 	return nil
 }
 
-func (n *Node) Value() string {
+func (n *Node) Value() (string, error) {
 	if n.Fun != nil {
 		return n.Fun.Invoke()
 	} else {
