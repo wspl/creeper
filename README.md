@@ -1,5 +1,4 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat)](https://opensource.org/licenses/Apache-2.0)
-[![PyPI](https://img.shields.io/pypi/status/Django.svg?style=flat)]()
 ![Creeper](https://raw.githubusercontent.com/wspl/creeper/master/art/Creeper.png)
 ## About
 
