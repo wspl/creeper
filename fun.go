@@ -85,20 +85,18 @@ func (f *Fun) InitSelector() error {
 }
 
 func (f *Fun) Invoke() (string, error) {
+	var err error
 	switch f.Name {
 	case "$":
-		err := f.InitSelector()
-		if err != nil {
-			return "", err
-		}
+		err = f.InitSelector()
 	case "attr":
 		f.Result, _ = f.PrevFun.Selection.Attr(f.Params[0])
 	case "text":
 		f.Result = f.PrevFun.Selection.Text()
 	case "html":
-		f.Result, _ = f.PrevFun.Selection.Html()
+		f.Result, err = f.PrevFun.Selection.Html()
 	case "outerHTML":
-		f.Result, _ = goquery.OuterHtml(f.PrevFun.Selection)
+		f.Result, err = goquery.OuterHtml(f.PrevFun.Selection)
 	case "style":
 		f.Result, _ = f.PrevFun.Selection.Attr("style")
 	case "href":
@@ -106,28 +104,33 @@ func (f *Fun) Invoke() (string, error) {
 	case "src":
 		f.Result, _ = f.PrevFun.Selection.Attr("src")
 	case "calc":
-		v, _ := arithmetic.Parse(f.PrevFun.Result)
+		v, err := arithmetic.Parse(f.PrevFun.Result)
+		if err != nil { return "", err }
 		n, _ := arithmetic.ToFloat(v)
 		prec := 2
 		if len(f.Params) > 0 {
-			i64, _ := strconv.ParseInt(f.Params[0], 10, 32)
+			i64, err := strconv.ParseInt(f.Params[0], 10, 32)
+			if err != nil { return "", err }
 			prec = int(i64)
 		}
 		f.Result = strconv.FormatFloat(n, 'g', prec, 64)
 	case "expand":
-		rx := regexp.MustCompile(f.Params[0])
+		rx, err := regexp.Compile(f.Params[0])
+		if err != nil { return "", err }
 		src := f.PrevFun.Result
 		dst := []byte{}
 		m := rx.FindStringSubmatchIndex(src)
 		s := rx.ExpandString(dst, f.Params[1], src, m)
 		f.Result = string(s)
 	case "match":
-		rx := regexp.MustCompile(f.Params[0])
+		rx, err := regexp.Compile(f.Params[0])
+		if err != nil { return "", err }
 		rs := rx.FindAllStringSubmatch(f.PrevFun.Result, -1)
 		if len(rs) > 0 && len(rs[0]) > 1 {
 			f.Result = rs[0][1]
 		}
 	}
+	if err != nil { return "", err }
 	if f.NextFun != nil {
 		return f.NextFun.Invoke()
 	} else {
