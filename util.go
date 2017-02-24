@@ -2,6 +2,8 @@ package creeper
 
 import (
 	"regexp"
+	"crypto/md5"
+	"encoding/hex"
 )
 
 func stringsMap(l []string, cb func(string) string) []string {
@@ -26,4 +28,10 @@ func stringsMatch(l []string, r *regexp.Regexp) []string {
 	return stringsFilter(l, func(s string) bool {
 		return r.MatchString(s)
 	})
+}
+
+func MD5(s string) string {
+	m := md5.New()
+	m.Write([]byte(s))
+	return hex.EncodeToString(m.Sum(nil))
 }

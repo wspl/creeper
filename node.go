@@ -17,7 +17,7 @@ type Node struct {
 
 	Name      string
 	IsArray   bool
-	IsPrimaryKey bool
+	IsPrimary bool
 	IndentLen int
 
 	Page *Page
@@ -42,6 +42,23 @@ func (n *Node) Reset() {
 	n.Index = 0
 }
 
+func (n *Node) Filter(cb func(*Node) bool) []*Node {
+	nodes := []*Node{}
+	for node := n; node != nil; node = node.PrevNode {
+		if cb(node) {
+			nodes = append(nodes, node)
+		}
+	}
+	if n.NextNode != nil {
+		for node := n.NextNode; node != nil; node = node.NextNode {
+			if cb(node) {
+				nodes = append(nodes, node)
+			}
+		}
+	}
+	return nodes
+}
+
 func (n *Node) SearchRef(name string) *Node {
 	for node := n.PrevNode; node != nil; node = node.PrevNode {
 		if node.Name == name {
@@ -59,19 +76,38 @@ func (n *Node) SearchRef(name string) *Node {
 }
 
 func (n *Node) SearchFlatScope(name string) *Node {
-	for node := n; node != nil; node = node.PrevNode {
-		if node.Name == name {
-			return node
-		}
+	ns := n.Filter(func(n *Node) bool {
+		return n.Name == name
+	})
+	if len(ns) > 0 {
+		return ns[0]
+	} else {
+		return nil
 	}
-	if n.NextNode != nil {
-		for node := n.NextNode; node != nil; node = node.NextNode {
-			if node.Name == name {
-				return node
-			}
-		}
+}
+
+func (n *Node) Search(name string) *Node {
+	if n.FirstChildNode == nil { return nil }
+	ns := n.FirstChildNode.Filter(func(n *Node) bool {
+		return n.Name == name
+	})
+	if len(ns) > 0 {
+		return ns[0]
+	} else {
+		return nil
 	}
-	return nil
+}
+
+func (n *Node) Primary() *Node {
+	if n.FirstChildNode == nil { return nil }
+	ns := n.FirstChildNode.Filter(func(n *Node) bool {
+		return n.IsPrimary
+	})
+	if len(ns) > 0 {
+		return ns[0]
+	} else {
+		return nil
+	}
 }
 
 func (n *Node) Value() (string, error) {
@@ -94,7 +130,7 @@ func ParseNode(ln []string) []*Node {
 
 		switch node.Sn[4] {
 		case "[]": node.IsArray = true
-		case "*": node.IsPrimaryKey = true
+		case "*": node.IsPrimary = true
 		}
 
 		if justNode != nil {
