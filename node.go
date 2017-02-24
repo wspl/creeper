@@ -24,6 +24,8 @@ type Node struct {
 
 	Index int
 
+	Sn map[int]string
+
 	PrevNode       *Node
 	NextNode       *Node
 	ParentNode     *Node
@@ -83,10 +85,9 @@ func ParseNode(ln []string) []*Node {
 	for i, l := range ln {
 		node := new(Node)
 		node.Raw = l
-		sn, isArray := splitNode(l)
-		node.Name = sn[1]
-		node.IsArray = isArray
-		node.IndentLen = len(sn[0])
+		node.Sn, node.IsArray = splitNode(l)
+		node.Name = node.Sn[1]
+		node.IndentLen = len(node.Sn[0])
 
 		if justNode != nil {
 			if node.IndentLen == justNode.IndentLen {
@@ -111,20 +112,21 @@ func ParseNode(ln []string) []*Node {
 			}
 		}
 
-		if len(sn[2]) > 0 {
-			node.Page = ParsePage(node, sn[2])
-		}
-		if len(sn[3]) > 0 {
-			if sn[3][0] == '.' {
-				node.Fun = ParseFun(node, node.ParentNode.Fun.Raw+sn[3])
-				node.Page = node.ParentNode.Page
-			} else {
-				node.Fun = ParseFun(node, sn[3])
-			}
-		}
-
 		nodes = append(nodes, node)
 		justNode = node
+	}
+	for _, node := range nodes {
+		if len(node.Sn[2]) > 0 {
+			node.Page = ParsePage(node, node.Sn[2])
+		}
+		if len(node.Sn[3]) > 0 {
+			if node.Sn[3][0] == '.' {
+				node.Fun = ParseFun(node, node.ParentNode.Fun.Raw+node.Sn[3])
+				node.Page = node.ParentNode.Page
+			} else {
+				node.Fun = ParseFun(node, node.Sn[3])
+			}
+		}
 	}
 	return nodes
 }
