@@ -146,6 +146,8 @@ There are all supported funs:
 | style     |                                  | style attribute value                    |
 | href      |                                  | href attribute value                     |
 | src       |                                  | src attribute value                      |
+| class     |                                  | class attribute value                    |
+| id        |                                  | id attribute value                       |
 | calc      | (prec: int)                      | calculate arithmetic expression          |
 | match     | (regexp: string)                 | match first sub-string via regular expression |
 | expand    | (regexp: string, target: string) | expand matched strings to target string  |

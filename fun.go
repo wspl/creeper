@@ -103,6 +103,10 @@ func (f *Fun) Invoke() (string, error) {
 		f.Result, _ = f.PrevFun.Selection.Attr("href")
 	case "src":
 		f.Result, _ = f.PrevFun.Selection.Attr("src")
+	case "class":
+		f.Result, _ = f.PrevFun.Selection.Attr("class")
+	case "id":
+		f.Result, _ = f.PrevFun.Selection.Attr("id")
 	case "calc":
 		v, err := arithmetic.Parse(f.PrevFun.Result)
 		if err != nil { return "", err }
