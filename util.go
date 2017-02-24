@@ -1,9 +1,9 @@
 package creeper
 
 import (
-	"regexp"
 	"crypto/md5"
 	"encoding/hex"
+	"regexp"
 )
 
 func stringsMap(l []string, cb func(string) string) []string {

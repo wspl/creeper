@@ -87,7 +87,9 @@ func (n *Node) SearchFlatScope(name string) *Node {
 }
 
 func (n *Node) Search(name string) *Node {
-	if n.FirstChildNode == nil { return nil }
+	if n.FirstChildNode == nil {
+		return nil
+	}
 	ns := n.FirstChildNode.Filter(func(n *Node) bool {
 		return n.Name == name
 	})
@@ -99,7 +101,9 @@ func (n *Node) Search(name string) *Node {
 }
 
 func (n *Node) Primary() *Node {
-	if n.FirstChildNode == nil { return nil }
+	if n.FirstChildNode == nil {
+		return nil
+	}
 	ns := n.FirstChildNode.Filter(func(n *Node) bool {
 		return n.IsPrimary
 	})
@@ -129,8 +133,10 @@ func ParseNode(ln []string) []*Node {
 		node.IndentLen = len(node.Sn[0])
 
 		switch node.Sn[4] {
-		case "[]": node.IsArray = true
-		case "*": node.IsPrimary = true
+		case "[]":
+			node.IsArray = true
+		case "*":
+			node.IsPrimary = true
 		}
 
 		if justNode != nil {

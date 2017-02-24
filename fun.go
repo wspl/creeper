@@ -57,7 +57,9 @@ func PowerfulFind(s *goquery.Selection, q string) *goquery.Selection {
 
 func (f *Fun) PageBody() (*goquery.Document, error) {
 	body, err := f.Node.Page.Body()
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 	r := strings.NewReader(body)
 	return goquery.NewDocumentFromReader(r)
 }
@@ -65,7 +67,9 @@ func (f *Fun) PageBody() (*goquery.Document, error) {
 func (f *Fun) InitSelector() error {
 	if f.Node.IsArray || f.Node.IndentLen == 0 || f.Node.Page != nil {
 		doc, err := f.PageBody()
-		if err != nil { return err }
+		if err != nil {
+			return err
+		}
 		bud := PowerfulFind(doc.Selection, f.Params[0])
 		if len(bud.Nodes) > f.Node.Index {
 			f.Selection = PowerfulFind(doc.Selection, f.Params[0]).Eq(f.Node.Index)
@@ -109,18 +113,24 @@ func (f *Fun) Invoke() (string, error) {
 		f.Result, _ = f.PrevFun.Selection.Attr("id")
 	case "calc":
 		v, err := arithmetic.Parse(f.PrevFun.Result)
-		if err != nil { return "", err }
+		if err != nil {
+			return "", err
+		}
 		n, _ := arithmetic.ToFloat(v)
 		prec := 2
 		if len(f.Params) > 0 {
 			i64, err := strconv.ParseInt(f.Params[0], 10, 32)
-			if err != nil { return "", err }
+			if err != nil {
+				return "", err
+			}
 			prec = int(i64)
 		}
 		f.Result = strconv.FormatFloat(n, 'g', prec, 64)
 	case "expand":
 		rx, err := regexp.Compile(f.Params[0])
-		if err != nil { return "", err }
+		if err != nil {
+			return "", err
+		}
 		src := f.PrevFun.Result
 		dst := []byte{}
 		m := rx.FindStringSubmatchIndex(src)
@@ -128,13 +138,17 @@ func (f *Fun) Invoke() (string, error) {
 		f.Result = string(s)
 	case "match":
 		rx, err := regexp.Compile(f.Params[0])
-		if err != nil { return "", err }
+		if err != nil {
+			return "", err
+		}
 		rs := rx.FindAllStringSubmatch(f.PrevFun.Result, -1)
 		if len(rs) > 0 && len(rs[0]) > 1 {
 			f.Result = rs[0][1]
 		}
 	}
-	if err != nil { return "", err }
+	if err != nil {
+		return "", err
+	}
 	if f.NextFun != nil {
 		return f.NextFun.Invoke()
 	} else {

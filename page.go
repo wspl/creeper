@@ -50,13 +50,21 @@ func (p *Page) Url() (string, error) {
 
 func (p *Page) Body() (string, error) {
 	u, err := p.Url()
-	if err != nil { return "", err }
-	if v, e := p.Node.Creeper.CacheGet(u); e { return v, nil }
+	if err != nil {
+		return "", err
+	}
+	if v, e := p.Node.Creeper.CacheGet(u); e {
+		return v, nil
+	}
 	res, err := http.Get(u)
-	if err != nil { return "", err }
+	if err != nil {
+		return "", err
+	}
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
-	if err != nil { return "", err }
+	if err != nil {
+		return "", err
+	}
 	sb := string(body)
 	p.Node.Creeper.CacheSet(u, sb)
 	return sb, nil
