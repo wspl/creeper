@@ -43,9 +43,9 @@ Create `hacker_news.crs`
 page(@page=1) = "https://news.ycombinator.com/news?p={@page}"
 
 news[]: page -> $("tr.athing")
-	title: $(".title a.storylink").text
-	site: $(".title span.sitestr").text
-	link: $(".title a.storylink").href
+    title: $(".title a.storylink").text
+    site: $(".title span.sitestr").text
+    link: $(".title a.storylink").href
 ```
 
 Then, create `main.go`
