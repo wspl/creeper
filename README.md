@@ -12,7 +12,7 @@ Creeper is a *next-generation* crawler which fetches web page by creeper script.
 
 #### Stage-I
 
-* ~~Basic crawling function~~ ← Complete!
+* Basic crawling function ← **In progress**
 * Perfect the code to make it robust
 * Add unit test
 
