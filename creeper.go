@@ -67,16 +67,28 @@ func (c *Creeper) StringE(key string) (string, error) {
 }
 
 func (c *Creeper) Each(cle func(*Creeper)) {
-	stor := []string{}
-	for {
+	fstNv := []string{}
+	repStor := []string{}
+	each: for {
 		v, err := c.Node.Primary().Value()
 		if err != nil { continue }
-		for _, s := range stor {
+
+		if c.Node.Index == 0 {
+			for _, s := range fstNv {
+				if s == MD5(v) {
+					break each
+				}
+			}
+			fstNv = append(fstNv, MD5(v))
+		}
+
+		for _, s := range repStor {
 			if s == MD5(v) {
-				return
+				continue each
 			}
 		}
-		stor = append(stor, MD5(v))
+		repStor = append(repStor, MD5(v))
+
 		cle(c)
 		c.Next()
 	}
