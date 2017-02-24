@@ -53,7 +53,7 @@ func (p *Page) Body() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if v, e := p.Node.Creeper.Cache_Get(u); e {
+	if v, e := p.Node.Creeper.CacheGet(u); e {
 		return v, nil
 	}
 	res, err := http.Get(u)
@@ -66,7 +66,7 @@ func (p *Page) Body() (string, error) {
 		return "", err
 	}
 	sb := string(body)
-	p.Node.Creeper.Cache_Set(u, sb)
+	p.Node.Creeper.CacheSet(u, sb)
 	return sb, nil
 }
 

@@ -27,11 +27,11 @@ func NewByFormatted(f *Formatted) *Creeper {
 	}
 
 	cache := map[string]string{}
-	c.Cache_Get = func(k string) (string, bool) {
+	c.CacheGet = func(k string) (string, bool) {
 		v, e := cache[k]
 		return v, e
 	}
-	c.Cache_Set = func(k string, v string) {
+	c.CacheSet = func(k string, v string) {
 		cache[k] = v
 	}
 
@@ -42,8 +42,8 @@ type Creeper struct {
 	Nodes []*Node
 	Towns []*Town
 
-	Cache_Get func(string) (string, bool)
-	Cache_Set func(string, string)
+	CacheGet func(string) (string, bool)
+	CacheSet func(string, string)
 
 	Node *Node
 }
