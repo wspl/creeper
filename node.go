@@ -63,9 +63,11 @@ func (n *Node) SearchFlatScope(name string) *Node {
 			return node
 		}
 	}
-	for node := n.NextNode; node != nil; node = node.NextNode {
-		if node.Name == name {
-			return node
+	if n.NextNode != nil {
+		for node := n.NextNode; node != nil; node = node.NextNode {
+			if node.Name == name {
+				return node
+			}
 		}
 	}
 	return nil

@@ -50,18 +50,19 @@ type Creeper struct {
 
 func (c *Creeper) Array(key string) *Creeper {
 	if c.Node == nil {
-		c.Node = c.Nodes[0]
+		c.Node = c.Nodes[0].SearchFlatScope(key)
+	} else {
+		c.Node = c.Node.FirstChildNode.SearchFlatScope(key)
 	}
-	c.Node = c.Node.SearchFlatScope(key)
 	return c
 }
 
-func (c *Creeper) MString(key string) string {
-	v, _ := c.String(key)
+func (c *Creeper) String(key string) string {
+	v, _ := c.StringE(key)
 	return v
 }
 
-func (c *Creeper) String(key string) (string, error) {
+func (c *Creeper) StringE(key string) (string, error) {
 	return c.Node.FirstChildNode.SearchFlatScope(key).Value()
 }
 
