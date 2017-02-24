@@ -14,7 +14,7 @@ type Formatted struct {
 
 var (
 	rx_isTown = regexp.MustCompile(`^\s*[a-zA-Z][a-zA-Z_-]{0,31}\s*(\(|=)`)
-	rx_isNode = regexp.MustCompile(`^\s*[a-zA-Z_-]{1,32}(\[])?:`)
+	rx_isNode = regexp.MustCompile(`^\s*[a-zA-Z_-]{1,32}(\[]|\*)?:`)
 )
 
 func Formatting(s string) *Formatted {

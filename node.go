@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	rx_node = regexp.MustCompile(`^(\s*)([a-zA-Z0-9-_]+)\s*(\[])?\s*:\s*(.+)$`)
+	rx_node = regexp.MustCompile(`^(\s*)([a-zA-Z0-9-_]+)\s*(\[]|\*)?\s*:\s*(.+)$`)
 	rx_page = regexp.MustCompile(`^[a-zA-Z-]`)
 	rx_fun  = regexp.MustCompile(`^($|.)`)
 )
@@ -17,6 +17,7 @@ type Node struct {
 
 	Name      string
 	IsArray   bool
+	IsPrimaryKey bool
 	IndentLen int
 
 	Page *Page
@@ -87,9 +88,14 @@ func ParseNode(ln []string) []*Node {
 	for i, l := range ln {
 		node := new(Node)
 		node.Raw = l
-		node.Sn, node.IsArray = splitNode(l)
+		node.Sn = splitNode(l)
 		node.Name = node.Sn[1]
 		node.IndentLen = len(node.Sn[0])
+
+		switch node.Sn[4] {
+		case "[]": node.IsArray = true
+		case "*": node.IsPrimaryKey = true
+		}
 
 		if justNode != nil {
 			if node.IndentLen == justNode.IndentLen {
@@ -133,19 +139,16 @@ func ParseNode(ln []string) []*Node {
 	return nodes
 }
 
-func splitNode(s string) (map[int]string, bool) {
+func splitNode(s string) map[int]string {
 	rs := map[int]string{}
-	isArray := false
 
 	sArr := rx_node.FindAllStringSubmatch(s, -1)
 	// indent
 	rs[0] = sArr[0][1]
 	// name
 	rs[1] = strings.TrimSpace(sArr[0][2])
-	// is array
-	if len(sArr[0][3]) == 2 {
-		isArray = true
-	}
+	// is array or primary key
+	rs[4] = sArr[0][3]
 
 	pfArr := strings.Split(sArr[0][4], "->")
 	if len(pfArr) == 1 {
@@ -159,5 +162,5 @@ func splitNode(s string) (map[int]string, bool) {
 		rs[3] = strings.TrimSpace(pfArr[1])
 	}
 
-	return rs, isArray
+	return rs
 }

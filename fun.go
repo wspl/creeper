@@ -55,17 +55,17 @@ func PowerfulFind(s *goquery.Selection, q string) *goquery.Selection {
 	}
 }
 
+func (f *Fun) PageBody() (*goquery.Document, error) {
+	body, err := f.Node.Page.Body()
+	if err != nil { return nil, err }
+	r := strings.NewReader(body)
+	return goquery.NewDocumentFromReader(r)
+}
+
 func (f *Fun) InitSelector() error {
 	if f.Node.IsArray || f.Node.IndentLen == 0 || f.Node.Page != nil {
-		body, err := f.Node.Page.Body()
-		if err != nil {
-			return err
-		}
-		r := strings.NewReader(body)
-		doc, err := goquery.NewDocumentFromReader(r)
-		if err != nil {
-			return err
-		}
+		doc, err := f.PageBody()
+		if err != nil { return err }
 		bud := PowerfulFind(doc.Selection, f.Params[0])
 		if len(bud.Nodes) > f.Node.Index {
 			f.Selection = PowerfulFind(doc.Selection, f.Params[0]).Eq(f.Node.Index)
