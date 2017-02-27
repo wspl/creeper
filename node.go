@@ -171,8 +171,7 @@ func ParseNode(ln []string) []*Node {
 		}
 		if len(node.Sn[3]) > 0 {
 			if node.Sn[3][0] == '.' {
-				node.Fun = ParseFun(node, node.ParentNode.Fun.Raw+node.Sn[3])
-				node.Page = node.ParentNode.Page
+				node.Fun = ParseFun(node, "$" + node.Sn[3])
 			} else {
 				node.Fun = ParseFun(node, node.Sn[3])
 			}

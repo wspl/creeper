@@ -83,7 +83,11 @@ func (f *Fun) InitSelector() error {
 		if err != nil {
 			return err
 		}
-		f.Selection = PowerfulFind(f.Node.ParentNode.Fun.Selection, f.Params[0]).Eq(f.Node.Index)
+		if len(f.Params) > 0 {
+			f.Selection = PowerfulFind(f.Node.ParentNode.Fun.Selection, f.Params[0]).Eq(f.Node.Index)
+		} else {
+			f.Selection = f.Node.ParentNode.Fun.Selection.Eq(f.Node.Index)
+		}
 	}
 	return nil
 }
