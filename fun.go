@@ -20,6 +20,7 @@ type Fun struct {
 	Name   string
 	Params []string
 
+	Document *goquery.Document
 	Selection *goquery.Selection
 	Result    string
 
@@ -64,33 +65,39 @@ func (f *Fun) PageBody() (*goquery.Document, error) {
 	return goquery.NewDocumentFromReader(r)
 }
 
-func (f *Fun) InitSelector() error {
-	if f.Node.IsArray || f.Node.IndentLen == 0 || f.Node.Page != nil {
+func (f *Fun) InitSelector(root bool) error {
+	var baseSel *goquery.Selection
+
+	if f.Node.Page != nil {
 		doc, err := f.PageBody()
 		if err != nil {
 			return err
 		}
-		bud := PowerfulFind(doc.Selection, f.Params[0])
+		f.Document = doc
+		baseSel = f.Document.Selection
+	} else {
+		f.Node.ParentNode.Fun.Invoke()
+		baseSel = f.Node.ParentNode.Fun.Selection
+	}
 
-		// overflow current page
-		if len(bud.Nodes) > f.Node.Index {
-			f.Selection = PowerfulFind(doc.Selection, f.Params[0]).Eq(f.Node.Index)
+	if f.Node.IsArray {
+		bundle := PowerfulFind(baseSel, f.Params[0])
+		if len(bundle.Nodes) > f.Node.Index {
+			f.Selection = PowerfulFind(baseSel, f.Params[0]).Eq(f.Node.Index)
 		} else {
+			// overflow current page
 			f.Node.Page.Inc()
 			f.Node.Reset()
-			f.InitSelector()
+			f.InitSelector(root)
 		}
 	} else {
-		_, err := f.Node.ParentNode.Fun.Invoke()
-		if err != nil {
-			return err
-		}
 		if len(f.Params) > 0 {
-			f.Selection = PowerfulFind(f.Node.ParentNode.Fun.Selection, f.Params[0]).Eq(f.Node.Index)
+			f.Selection = PowerfulFind(baseSel, f.Params[0]).Eq(f.Node.Index)
 		} else {
-			f.Selection = f.Node.ParentNode.Fun.Selection.Eq(f.Node.Index)
+			f.Selection = baseSel.Eq(f.Node.Index)
 		}
 	}
+
 	return nil
 }
 
@@ -98,7 +105,7 @@ func (f *Fun) Invoke() (string, error) {
 	var err error
 	switch f.Name {
 	case "$":
-		err = f.InitSelector()
+		err = f.InitSelector(false)
 	case "attr":
 		f.Result, _ = f.PrevFun.Selection.Attr(f.Params[0])
 	case "text":
