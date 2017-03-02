@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strings"
 	"unicode"
+	"strconv"
 )
 
 var (
@@ -138,6 +139,17 @@ func parseParams(s string) (map[string]string, int) {
 	inExp := false // `example`
 	inStd := false //  example
 
+	noKeyIndex := 0
+	insertVal := func(v string) {
+		if pIsK {
+			kvMap[pK] = strings.TrimSpace(sb.String())
+		} else {
+			kvMap["$"+strconv.Itoa(noKeyIndex)] = v
+			noKeyIndex++
+		}
+		pIsK = false
+	}
+
 	for i, c := range s {
 		cso := func(o int) int32 {
 			oi := i + o
@@ -218,34 +230,19 @@ func parseParams(s string) (map[string]string, int) {
 				//println("str: ", sb.String())
 				s := strings.TrimSpace(sb.String())
 				s = strings.Replace(s, `\\`, `\`, -1)
-				if pIsK {
-					kvMap[pK] = strings.TrimSpace(sb.String())
-				} else {
-					kvMap[s] = ""
-				}
-				pIsK = false
+				insertVal(s)
 				sb.Reset()
 			} else if inExp && cso(1) == '`' {
 				inExp = false
 				//println("exp: ", sb.String())
 				s := strings.TrimSpace(sb.String())
-				if pIsK {
-					kvMap[pK] = strings.TrimSpace(sb.String())
-				} else {
-					kvMap[s] = ""
-				}
-				pIsK = false
+				insertVal(s)
 				sb.Reset()
 			} else if inStd && (co(1) == ',' || co(1) == ')') {
 				inStd = false
 				//println("std: ", sb.String())
 				s := strings.TrimSpace(sb.String())
-				if pIsK {
-					kvMap[pK] = strings.TrimSpace(sb.String())
-				} else {
-					kvMap[s] = ""
-				}
-				pIsK = false
+				insertVal(s)
 				sb.Reset()
 			}
 		}
@@ -254,5 +251,6 @@ func parseParams(s string) (map[string]string, int) {
 			break
 		}
 	}
+
 	return kvMap, endPos
 }

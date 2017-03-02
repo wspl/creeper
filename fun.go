@@ -71,6 +71,8 @@ func (f *Fun) InitSelector() error {
 			return err
 		}
 		bud := PowerfulFind(doc.Selection, f.Params[0])
+
+		// overflow current page
 		if len(bud.Nodes) > f.Node.Index {
 			f.Selection = PowerfulFind(doc.Selection, f.Params[0]).Eq(f.Node.Index)
 		} else {
@@ -170,8 +172,12 @@ func ParseFun(n *Node, s string) *Fun {
 	ls := s[len(sa[0]):]
 	ps := []string{}
 	p, pl := parseParams(ls)
-	for k := range p {
-		ps = append(ps, k)
+	for i := 0;; i++ {
+		if v, e := p["$"+strconv.Itoa(i)]; e {
+			ps = append(ps, v)
+		} else {
+			break
+		}
 	}
 	if len(ps) > 0 {
 		fun.Params = ps

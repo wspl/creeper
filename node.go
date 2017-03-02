@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	rx_node = regexp.MustCompile(`^(\s*)([a-zA-Z0-9-_]+)\s*(\[]|\*)?\s*:\s*(.+)$`)
+	rx_node = regexp.MustCompile(`^(\s*)(@?[a-zA-Z0-9_-]+)\s*(\[]|\*)?\s*:\s*(.+)$`)
 	rx_page = regexp.MustCompile(`^[a-zA-Z-]`)
 	rx_fun  = regexp.MustCompile(`^($|.)`)
 )
@@ -34,7 +34,7 @@ type Node struct {
 	LastChildNode  *Node
 }
 
-func (n *Node) Inc() {
+func (n *Node) Next() {
 	n.Index++
 }
 
@@ -86,13 +86,11 @@ func (n *Node) SearchFlatScope(name string) *Node {
 	}
 }
 
-func (n *Node) Search(name string) *Node {
+func (n *Node) ChildFilter(cb func(*Node) bool) *Node {
 	if n.FirstChildNode == nil {
 		return nil
 	}
-	ns := n.FirstChildNode.Filter(func(n *Node) bool {
-		return n.Name == name
-	})
+	ns := n.FirstChildNode.Filter(cb)
 	if len(ns) > 0 {
 		return ns[0]
 	} else {
@@ -100,18 +98,22 @@ func (n *Node) Search(name string) *Node {
 	}
 }
 
-func (n *Node) Primary() *Node {
-	if n.FirstChildNode == nil {
-		return nil
-	}
-	ns := n.FirstChildNode.Filter(func(n *Node) bool {
+func (n *Node) Search(name string) *Node {
+	return n.ChildFilter(func(n *Node) bool {
+		return n.Name == name
+	})
+}
+
+func (n *Node) PrimaryNode() *Node {
+	return n.ChildFilter(func(n *Node) bool {
 		return n.IsPrimary
 	})
-	if len(ns) > 0 {
-		return ns[0]
-	} else {
-		return nil
-	}
+}
+
+func (n *Node) NextDirectorNode() *Node {
+	return n.ChildFilter(func(n *Node) bool {
+		return n.Name == "@next"
+	})
 }
 
 func (n *Node) Value() (string, error) {

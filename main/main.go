@@ -5,12 +5,12 @@ import (
 )
 
 func main() {
-	//c := creeper.Open("./eh.crs")
-	//c.Array("gallery").Each(func(c *creeper.Creeper) {
-	//	println("title: ", c.String("title"))
-	//	println("cover: ", c.String("cover"))
-	//	println("===")
-	//})
+	c := creeper.Open("./eh.crs")
+	c.Array("gallery").Each(func(c *creeper.Creeper) {
+		//println("title: ", c.String("title"))
+		println("cover: ", c.String("cover"))
+		println("===")
+	})
 	//c = c.Array("gallery")
 	//c.Array("pictures").Each(func(c *creeper.Creeper) {
 	//	println(c.String("src"))
@@ -22,12 +22,4 @@ func main() {
 	//	println("link: ", c.String("link"))
 	//	println("===")
 	//})
-	c := creeper.New(`
-gallery(@page=0) = "https://e-hentai.org/g/1034547/27cc8cb432/?p={@page}"
-tags[]: gallery -> $("div#taglist table tr td div a")
-	name*: .html`)
-	c.Array("tags").Each(func(c *creeper.Creeper) {
-		println(c.String("name"))
-	})
-
 }
