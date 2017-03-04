@@ -23,7 +23,10 @@ type Fun struct {
 	Document *goquery.Document
 	Selection *goquery.Selection
 	Result    string
-	TempStop bool
+
+	TempSkip bool
+
+	BundleSize int
 
 	PrevFun *Fun
 	NextFun *Fun
@@ -86,17 +89,27 @@ func (f *Fun) InitSelector(root bool) error {
 
 	if f.Node.IsArray {
 		bundle := PowerfulFind(baseSel, f.Params[0])
-		if len(bundle.Nodes) > f.Node.Index || f.TempStop {
+		f.BundleSize = len(bundle.Nodes)
+		if f.BundleSize > f.Node.Index {
 			f.Selection = PowerfulFind(baseSel, f.Params[0]).Eq(f.Node.Index)
-			f.TempStop = false
+
+			if f.Node.NextDirectorNode() != nil && !f.Node.Page.NextReady && !f.TempSkip {
+				f.TempSkip = true
+				np, err := f.Node.NextDirectorNode().Value()
+				f.TempSkip = false
+				if err != nil || len(np) == 0 {
+					f.Node.Page.NextNoMore = true
+					return err
+				}
+				f.Node.Page.NextMode = true
+				f.Node.Page.NextPendingUrl = np
+				f.Node.Page.NextReady = true
+			}
 		} else {
 			// overflow current page
-			if f.Node.NextDirectorNode() != nil {
-				f.TempStop = true
-				np, err := f.Node.NextDirectorNode().Value()
-				if err != nil { return err }
-				f.Node.Page.NextMode = true
-				f.Node.Page.NextUrl = np
+			if f.Node.Page.NextMode && f.Node.Page.NextReady {
+				f.Node.Page.NextUrl = f.Node.Page.NextPendingUrl
+				f.Node.Page.NextReady = false
 			} else {
 				f.Node.Page.Inc()
 			}

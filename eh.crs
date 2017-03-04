@@ -23,6 +23,7 @@ gallery[]: index -> $("table.itg tr.gtr0,tr.gtr1")
     tags[]: gallery(code = _code) -> $("div#taglist table tr td:eq(1) div a")
         name*: .html
     pictures[]: gallery(code = _code) -> $("div.gdtl,div.gdtm")
+        @next: $root("table.ptt td:last-child a").href
         thumbnail: .html.match(`(https?://[^"]*?\.jpg)`)
         _srcHref: $("a").href
         src*: _srcHref -> $("div.sni a img[style]").src

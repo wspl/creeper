@@ -6,9 +6,9 @@ import (
 
 func main() {
 	c := creeper.Open("./eh.crs")
-	c.Array("gallery").Each(func(c *creeper.Creeper) {
+	c.Array("gallery").Array("pictures").Each(func(c *creeper.Creeper) {
 		//println("title: ", c.String("title"))
-		println("cover: ", c.String("cover"))
+		println("t: ", c.String("src"))
 		println("===")
 	})
 	//c = c.Array("gallery")

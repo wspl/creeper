@@ -13,8 +13,11 @@ type Page struct {
 	Town     *Town
 	Ref      string
 
-	NextUrl string
 	NextMode bool
+	NextUrl string
+	NextPendingUrl string
+	NextReady bool
+	NextNoMore bool
 
 	Index int
 }

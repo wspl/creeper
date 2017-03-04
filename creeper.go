@@ -94,8 +94,12 @@ each:
 			}
 			repStor = append(repStor, v)
 		}
-
 		cle(c)
+		println(c.Node.Index + 1, c.Node.Fun.BundleSize, c.Node.Page.NextNoMore)
+		if c.Node.Index == c.Node.Fun.BundleSize - 1 && c.Node.Page.NextNoMore {
+			break each
+		}
+
 		c.Next()
 	}
 }
