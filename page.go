@@ -10,8 +10,11 @@ type Page struct {
 	Raw  string
 	Node *Node
 
-	Town *Town
-	Ref  string
+	Town     *Town
+	Ref      string
+
+	NextUrl string
+	NextMode bool
 
 	Index int
 }
@@ -21,6 +24,9 @@ func (p *Page) Inc() {
 }
 
 func (p *Page) Url() (string, error) {
+	if p.NextMode {
+		return p.NextUrl, nil
+	}
 	if p.Town != nil {
 		p.Town.Attach()
 		if p.Index > -1 {

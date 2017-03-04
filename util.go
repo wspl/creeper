@@ -35,3 +35,24 @@ func MD5(s string) string {
 	m.Write([]byte(s))
 	return hex.EncodeToString(m.Sum(nil))
 }
+
+type MonoStack struct {
+	value string
+	has bool
+}
+
+func (o *MonoStack) Set(s string) {
+	o.value = s
+	o.has = true
+}
+
+func (o *MonoStack) Has() bool {
+	return o.has
+}
+
+func (o *MonoStack) Value() string {
+	o.has = false
+	s := o.value
+	o.value = ""
+	return s
+}

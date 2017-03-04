@@ -138,7 +138,8 @@ There are all supported funs:
 
 | Name      | Parameters                       | Description                              |
 | --------- | -------------------------------- | ---------------------------------------- |
-| $         | (selector: string)               | CSS selector                             |
+| $         | (selector: string)               | Relative CSS selector (select from parent node)|
+| $root     | (selector: string)               | Absolute CSS selector (select from body)|
 | html      |                                  | inner HTML                               |
 | text      |                                  | inner text                               |
 | outerHTML |                                  | outer HTML                               |

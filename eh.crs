@@ -7,6 +7,7 @@ gallery(@page=0,code)="http://g.e-hentai.org/g/{code}/?p={@page}&hc=1"
 
 # Crawler Struct
 gallery[]: index -> $("table.itg tr.gtr0,tr.gtr1")
+    @next: $root("table.ptt td:last-child a").href
     title: $("td.itd div div.it5 a").text
     cover: $("td.itd div div.it2")
         .html

@@ -23,6 +23,7 @@ type Fun struct {
 	Document *goquery.Document
 	Selection *goquery.Selection
 	Result    string
+	TempStop bool
 
 	PrevFun *Fun
 	NextFun *Fun
@@ -67,7 +68,6 @@ func (f *Fun) PageBody() (*goquery.Document, error) {
 
 func (f *Fun) InitSelector(root bool) error {
 	var baseSel *goquery.Selection
-
 	if f.Node.Page != nil {
 		doc, err := f.PageBody()
 		if err != nil {
@@ -77,16 +77,29 @@ func (f *Fun) InitSelector(root bool) error {
 		baseSel = f.Document.Selection
 	} else {
 		f.Node.ParentNode.Fun.Invoke()
-		baseSel = f.Node.ParentNode.Fun.Selection
+		if root {
+			baseSel = f.Node.ParentNode.Fun.Document.Selection
+		} else {
+			baseSel = f.Node.ParentNode.Fun.Selection
+		}
 	}
 
 	if f.Node.IsArray {
 		bundle := PowerfulFind(baseSel, f.Params[0])
-		if len(bundle.Nodes) > f.Node.Index {
+		if len(bundle.Nodes) > f.Node.Index || f.TempStop {
 			f.Selection = PowerfulFind(baseSel, f.Params[0]).Eq(f.Node.Index)
+			f.TempStop = false
 		} else {
 			// overflow current page
-			f.Node.Page.Inc()
+			if f.Node.NextDirectorNode() != nil {
+				f.TempStop = true
+				np, err := f.Node.NextDirectorNode().Value()
+				if err != nil { return err }
+				f.Node.Page.NextMode = true
+				f.Node.Page.NextUrl = np
+			} else {
+				f.Node.Page.Inc()
+			}
 			f.Node.Reset()
 			f.InitSelector(root)
 		}
@@ -106,6 +119,8 @@ func (f *Fun) Invoke() (string, error) {
 	switch f.Name {
 	case "$":
 		err = f.InitSelector(false)
+	case "$root":
+		err = f.InitSelector(true)
 	case "attr":
 		f.Result, _ = f.PrevFun.Selection.Attr(f.Params[0])
 	case "text":
