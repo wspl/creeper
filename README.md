@@ -6,26 +6,7 @@
 
 Creeper is a *next-generation* crawler which fetches web page by creeper script. As a cross-platform embedded crawler, you can use it for your news app, subscribe program, etc.
 
-**Warning:** At present this project is still under stage-1 development, please do not use in the production environment.
-
-## Roadmap
-
-#### Stage-I
-
-* Basic crawling function ← **In progress**
-* Perfect the code to make it robust
-* Add unit test
-
-#### Stage-II
-
-- Decoupling http client and goquery, and add custom interfaces.
-- Cross-platform support. Provide Android and iOS SDK.
-
-#### Stage-III
-
-- Add restful api for remote calling
-- Add debug api
-- Create an IDE based on web for creeper script
+**Warning:** At present this project is still under early stage development, please do not use in the production environment.
 
 ## Get Started
 
